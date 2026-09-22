@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>A Little Birthday Surprise 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --lavender:#F1ECFF;
+    --blush:#FFE1EC;
+    --mint:#DFFBF0;
+    --plum:#6B4E71;
+    --coral:#FF8FA3;
+    --gold:#FFC857;
+    --cream:#FFFDF9;
+    --ink:#4A3B4D;
+    --glass-bg: rgba(255,255,255,0.5);
+    --glass-border: rgba(255,255,255,0.7);
+    --shadow: 0 10px 30px rgba(107, 78, 113, 0.16);
+    --shadow-soft: 0 4px 16px rgba(107, 78, 113, 0.10);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100dvh;
+    font-family:'Quicksand', sans-serif;
+    color:var(--ink);
+    overflow-x:hidden;
+    background:#EDE7F6;
+  }
+
+  body{
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    min-height:100dvh;
+  }
+
+  /* ---------- ADAPTIVE APP SHELL ---------- */
+  .app-shell{
+    position:relative;
+    width:100%;
+    max-width:480px;
+    min-height:100dvh;
+    margin:0 auto;
+    background:
+      radial-gradient(circle at 15% 20%, var(--blush) 0%, transparent 45%),
+      radial-gradient(circle at 85% 15%, var(--mint) 0%, transparent 40%),
+      radial-gradient(circle at 50% 90%, var(--lavender) 0%, transparent 55%),
+      var(--cream);
+    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  @media (min-width: 481px){
+    body{ padding: 28px 0; }
+    .app-shell{
+      min-height: min(860px, 94dvh);
+      border-radius: 36px;
+      box-shadow: 0 30px 70px rgba(46,30,50,0.28);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+  }
+
+  .ambient-layer{
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .floaty{
+    position: absolute;
+    bottom: -60px;
+    opacity: 0;
+    animation-name: floatUp;
+    animation-timing-function: ease-in;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes floatUp{
+    0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    10%{ opacity: 0.5; }
+    50%{ transform: translateY(-50vh) translateX(16px) rotate(12deg); }
+    90%{ opacity: 0.35; }
+    100%{ transform: translateY(-100vh) translateX(-12px) rotate(-10deg); opacity: 0; }
+  }
+
+  .glass{
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  main.app{
+    position:relative;
+    z-index:2;
+    flex:1;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: clamp(20px, 6vw, 36px) clamp(16px, 5vw, 28px) 70px;
+  }
+
+  .screen{
+    width:100%;
+    max-width:380px;
+    text-align:center;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    animation: floatIn 0.6s ease;
+    border-radius: 26px;
+    padding: clamp(24px,6vw,34px) clamp(16px,5vw,24px) clamp(20px,5vw,26px);
+  }
+  .screen.active{ display:flex; }
+
+  @keyframes floatIn{
+    from{ opacity:0; transform: translateY(20px) scale(0.97); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  h1,h2{
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    color:var(--plum);
+    margin: 0 0 8px;
+  }
+  h1{ font-size: clamp(1.2rem, 5vw, 1.55rem); }
+
+  p.sub{
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    color: var(--ink);
+    opacity: 0.8;
+    margin: 0 0 22px;
+    line-height:1.5;
+  }
+
+  /* ---------- PUPPY ---------- */
+  .puppy-wrap{
+    width: min(170px, 42vw);
+    margin: 0 auto 14px;
+    animation: bob 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 14px 18px rgba(107,78,113,0.18));
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(-1deg); }
+    50%{ transform: translateY(-10px) rotate(1deg); }
+  }
+  .heart-pulse{ transform-origin: center; animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.12); } }
+
+  /* ---------- BUTTONS ---------- */
+  .btn-row{ display:flex; gap:14px; margin-top: 4px; flex-wrap: wrap; justify-content:center; }
+  button{
+    font-family:'Fredoka', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border:none;
+    cursor:pointer;
+    padding: 13px 28px;
+    border-radius: 999px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: var(--shadow-soft);
+  }
+  button:focus-visible{ outline: 3px solid var(--plum); outline-offset: 2px; }
+  button:active{ transform: scale(0.96); }
+  .btn-yes{ background: linear-gradient(135deg, var(--coral), #FFB6C1); color: #fff; }
+  .btn-yes:hover{ transform: translateY(-3px); box-shadow: var(--shadow); }
+  .btn-no{ background: rgba(241,236,255,0.9); color: var(--plum); }
+  .btn-no:hover{ transform: translateY(-3px); box-shadow: var(--shadow); }
+
+  /* ---------- MODAL (No) ---------- */
+  .modal-overlay{
+    position: absolute;
+    inset:0;
+    background: rgba(74,59,77,0.35);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 50;
+    backdrop-filter: blur(3px);
+    padding: 20px;
+    border-radius: inherit;
+  }
+  .modal-overlay.active{ display:flex; }
+  .modal-box{
+    background: rgba(255,253,249,0.92);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 22px;
+    padding: 28px 24px;
+    width:min(280px, 100%);
+    text-align:center;
+    box-shadow: var(--shadow);
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn{ from{ transform: scale(0.85); opacity:0; } to{ transform: scale(1); opacity:1; } }
+  .modal-box p{ font-size: 1.05rem; margin: 0 0 18px; }
+  .modal-box button{ background: var(--coral); color:#fff; padding: 10px 26px; }
+
+  /* ---------- STAGE (cake / gift / letter swap in place) ---------- */
+  .stage{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height: 260px;
+    justify-content:center;
+  }
+  .stage-item{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    opacity:0;
+    transform: scale(0.94);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .stage-item.visible{ display:flex; opacity:1; transform: scale(1); }
+
+  /* ---------- CAKE ---------- */
+  .cake-wrap{
+    width: min(210px, 55vw);
+    cursor:pointer;
+    filter: drop-shadow(0 12px 16px rgba(107,78,113,0.16));
+  }
+  .flame{ transform-origin: 50% 100%; animation: flicker 0.4s ease-in-out infinite alternate; }
+  @keyframes flicker{ 0%{ transform: scale(1,1) rotate(-2deg); } 100%{ transform: scale(1.08,0.94) rotate(2deg); } }
+  .flame.out{ display:none; }
+  .smoke{ opacity:0; }
+  .smoke.show{ animation: smokeRise 1.4s ease-out forwards; }
+  @keyframes smokeRise{
+    0%{ opacity:0.6; transform: translateY(0) scale(1); }
+    100%{ opacity:0; transform: translateY(-40px) scale(1.6); }
+  }
+
+  .mic-status{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--plum);
+    min-height: 1.4em;
+    text-align:center;
+  }
+  .eq-bars{ display:flex; align-items:flex-end; gap:2px; height:14px; }
+  .eq-bars span{
+    width:3px;
+    background: var(--coral);
+    border-radius: 2px;
+    animation: eqBounce 0.9s ease-in-out infinite;
+  }
+  .eq-bars span:nth-child(1){ height:6px; animation-delay:0s; }
+  .eq-bars span:nth-child(2){ height:12px; animation-delay:0.15s; }
+  .eq-bars span:nth-child(3){ height:8px; animation-delay:0.3s; }
+  @keyframes eqBounce{ 0%,100%{ transform: scaleY(0.5); } 50%{ transform: scaleY(1.3); } }
+  .tap-hint{ font-size: 0.78rem; opacity:0.65; margin-top:6px; }
+
+  /* ---------- GIFT BOX ---------- */
+  .gift-wrap{
+    width: min(190px, 50vw);
+    cursor:pointer;
+    transition: transform 0.2s ease;
+  }
+  .gift-wrap:hover{ transform: translateY(-4px) scale(1.03); }
+  .gift-lid{ transform-origin: 50% 100%; transition: transform 0.5s cubic-bezier(.34,1.56,.64,1); }
+  .gift-wrap.opened .gift-lid{ transform: translateY(-30px) rotate(-18deg); opacity: 0; }
+  .gift-wrap.opened .gift-glow{ opacity: 1; }
+  .gift-glow{ opacity:0; transition: opacity 0.4s ease; }
+  .gift-caption{ margin-top:14px; font-size:0.85rem; color:var(--plum); opacity:0.75; }
+
+  /* ---------- VINTAGE LETTER ---------- */
+  .letter-wrap{ width:100%; display:flex; justify-content:center; }
+  .letter-card{
+    position:relative;
+    width: min(380px, 100%);
+    background-color: #f4ecd8;
+    background-image:
+      radial-gradient(ellipse at 8% 12%, rgba(139,111,71,0.16) 0%, transparent 32%),
+      radial-gradient(ellipse at 92% 88%, rgba(139,111,71,0.18) 0%, transparent 35%),
+      radial-gradient(ellipse at 85% 10%, rgba(139,111,71,0.10) 0%, transparent 28%),
+      repeating-linear-gradient(0deg, rgba(139,111,71,0.035) 0px, transparent 1px, transparent 2px, rgba(139,111,71,0.035) 3px);
+    border: 8px double #a9885f;
+    border-radius: 6px;
+    padding: clamp(22px,6vw,34px) clamp(18px,5vw,30px);
+    box-shadow:
+      0 18px 40px rgba(90, 62, 30, 0.28),
+      inset 0 0 60px rgba(139,111,71,0.28),
+      inset 0 0 0 6px rgba(255,251,240,0.5);
+    text-align:center;
+  }
+  .letter-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius: 6px;
+    box-shadow:
+      inset 0 0 18px 6px rgba(80,55,25,0.30),
+      inset 0 0 70px 10px rgba(80,55,25,0.10);
+    pointer-events:none;
+  }
+  .letter-title{
+    font-family:'Great Vibes', cursive;
+    font-size: clamp(1.7rem, 7vw, 2.3rem);
+    color:#7a5230;
+    margin: 0 0 10px;
+    letter-spacing: 0.5px;
+  }
+  .letter-card p{
+    position:relative;
+    font-family:'Dancing Script', cursive;
+    font-weight: 600;
+    font-size: clamp(1.15rem, 4.4vw, 1.4rem);
+    line-height: 1.65;
+    color:#5b3f22;
+    margin:0;
+    white-space: pre-wrap;
+  }
+  .letter-seal{
+    margin-top: 18px;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color:#8b6f47;
+    opacity:0.7;
+  }
+
+  /* ---------- CONFETTI ---------- */
+  .confetti-piece{
+    position: absolute;
+    top: -10px;
+    width: 8px;
+    height: 14px;
+    opacity:0.9;
+    pointer-events:none;
+    z-index: 40;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall{ to{ transform: translateY(900px) rotate(540deg); opacity: 0.3; } }
+
+  /* ---------- MUSIC TOGGLE ---------- */
+  .music-toggle{
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size: 1rem;
+    box-shadow: var(--shadow-soft);
+    z-index: 30;
+    padding: 0;
+  }
+  .music-toggle.show{ display:flex; }
+
+  /* ---------- CREATOR SETTINGS TRIGGER ---------- */
+  .admin-toggle{
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    color: var(--plum);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    padding: 9px 14px;
+    box-shadow: var(--shadow-soft);
+    z-index: 30;
+  }
+  .admin-toggle:hover{ transform: translateY(-2px); }
+
+  /* ---------- ADMIN OVERLAY / DRAWER ---------- */
+  .sidebar-overlay{
+    position: absolute;
+    inset: 0;
+    background: rgba(74,59,77,0.3);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 44;
+    border-radius: inherit;
+  }
+  .sidebar-overlay.open{ opacity: 1; pointer-events: auto; }
+
+  .admin-panel{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    max-height: 82%;
+    width: 100%;
+    background: rgba(255,253,249,0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(255,255,255,0.8);
+    border-radius: 22px 22px 0 0;
+    padding: 14px clamp(16px,5vw,26px) clamp(18px,5vw,24px);
+    box-shadow: 0 -14px 40px rgba(107,78,113,0.2);
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(.34,1,.64,1);
+    z-index: 45;
+    overflow-y:auto;
+    text-align: left;
+  }
+  .admin-panel.open{ transform: translateY(0); }
+  .drag-handle{
+    width: 42px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(107,78,113,0.25);
+    margin: 0 auto 14px;
+  }
+  .admin-panel h3{
+    font-family:'Fredoka', sans-serif;
+    color: var(--plum);
+    margin: 0 0 4px;
+    font-size: 1.02rem;
+  }
+  .admin-panel p.hint{ font-size: 0.8rem; opacity: 0.7; margin: 0 0 14px; line-height:1.4; }
+  .admin-panel textarea{
+    width: 100%;
+    min-height: 110px;
+    border-radius: 14px;
+    border: 2px solid var(--lavender);
+    padding: 10px 12px;
+    font-family:'Quicksand', sans-serif;
+    font-size: 0.9rem;
+    resize: vertical;
+    display:block;
+    margin: 0 0 12px;
+    background: rgba(255,255,255,0.7);
+  }
+  .admin-panel textarea:focus{ outline: none; border-color: var(--coral); }
+  .admin-actions{ display:flex; flex-direction: column; gap: 10px; }
+  .btn-generate{ background: linear-gradient(135deg, var(--plum), #8A6C90); color:#fff; padding: 11px 20px; font-size: 0.88rem; width: 100%; }
+  .btn-close-admin{ background: var(--lavender); color: var(--plum); padding: 9px 20px; font-size: 0.85rem; width: 100%; }
+  .link-preview{
+    font-size: 0.72rem;
+    color: var(--plum);
+    background: rgba(241,236,255,0.7);
+    border-radius: 10px;
+    padding: 9px 11px;
+    margin: 12px 0 0;
+    word-break: break-all;
+    display:none;
+  }
+  .link-preview.show{ display:block; }
+  .copied-note{ font-size: 0.76rem; color: #3E8E5A; margin-top: 8px; display:none; }
+  .copied-note.show{ display:inline-block; }
+
+  @media (min-width: 640px){
+    .admin-panel{
+      left: auto;
+      top: 0;
+      bottom: 0;
+      width: min(340px, 90%);
+      border-radius: 0;
+      border-top: none;
+      border-left: 1px solid rgba(255,255,255,0.8);
+      box-shadow: -14px 0 40px rgba(107,78,113,0.2);
+      transform: translateX(100%);
+      max-height: none;
+    }
+    .admin-panel.open{ transform: translateX(0); }
+    .drag-handle{ display:none; }
+  }
+
+  @media (max-width: 340px){
+    .puppy-wrap{ width: 130px; }
+    button{ padding: 11px 20px; font-size: 0.88rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell" id="appShell">
+
+  <div class="ambient-layer" id="ambientLayer"></div>
+
+  <main class="app">
+
+    <!-- SCREEN 1: THE QUESTION -->
+    <section class="screen glass active" id="screen1">
+      <div class="puppy-wrap">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="earGrad" cx="35%" cy="30%" r="80%">
+              <stop offset="0%" stop-color="#FBEBD4"/>
+              <stop offset="100%" stop-color="#EFC29A"/>
+            </radialGradient>
+            <radialGradient id="headGrad" cx="35%" cy="28%" r="85%">
+              <stop offset="0%" stop-color="#FFF0DC"/>
+              <stop offset="100%" stop-color="#FADFC0"/>
+            </radialGradient>
+            <linearGradient id="heartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFB0BF"/>
+              <stop offset="100%" stop-color="#FF8FA3"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="100" cy="185" rx="55" ry="10" fill="#6B4E71" opacity="0.08"/>
+          <ellipse cx="55" cy="80" rx="26" ry="34" fill="url(#earGrad)" transform="rotate(-25 55 80)"/>
+          <ellipse cx="145" cy="80" rx="26" ry="34" fill="url(#earGrad)" transform="rotate(25 145 80)"/>
+          <circle cx="100" cy="105" r="58" fill="url(#headGrad)"/>
+          <ellipse cx="100" cy="175" rx="48" ry="24" fill="url(#headGrad)"/>
+          <ellipse cx="100" cy="122" rx="26" ry="18" fill="#FFF8ED"/>
+          <ellipse cx="100" cy="126" rx="7" ry="5" fill="#6B4E71"/>
+          <path d="M92 130 Q100 136 108 130" stroke="#6B4E71" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="80" cy="98" r="5.5" fill="#4A3B4D"/>
+          <circle cx="120" cy="98" r="5.5" fill="#4A3B4D"/>
+          <circle cx="82" cy="96" r="1.6" fill="#fff"/>
+          <circle cx="122" cy="96" r="1.6" fill="#fff"/>
+          <ellipse cx="68" cy="112" rx="8" ry="5" fill="#FF8FA3" opacity="0.5"/>
+          <ellipse cx="132" cy="112" rx="8" ry="5" fill="#FF8FA3" opacity="0.5"/>
+          <ellipse cx="76" cy="160" rx="14" ry="12" fill="url(#earGrad)"/>
+          <ellipse cx="124" cy="160" rx="14" ry="12" fill="url(#earGrad)"/>
+          <g class="heart-pulse" transform="translate(100,152)">
+            <path d="M0 10 C -14 -2, -14 -18, 0 -10 C 14 -18, 14 -2, 0 10 Z" fill="url(#heartGrad)"/>
+          </g>
+        </svg>
+      </div>
+      <h1 id="question-text">Will you open your birthday surprise? 🎁</h1>
+      <p class="sub">Someone made this just for you...</p>
+      <div class="btn-row">
+        <button class="btn-yes" id="btnYes">Yes! 💗</button>
+        <button class="btn-no" id="btnNo">No</button>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: CAKE ➔ GIFT BOX ➔ LETTER (one clean stage) -->
+    <section class="screen glass" id="screen2">
+
+      <div class="stage" id="stage">
+
+        <!-- STATE 1: cake + candle -->
+        <div class="stage-item visible" id="stateCake">
+          <h1>Make a wish 🕯️</h1>
+          <p class="sub" id="micSub">Blow into your mic, or tap the flame</p>
+
+          <div class="cake-wrap" id="candleTarget" role="button" tabindex="0" aria-label="Blow out the candle">
+            <svg viewBox="0 0 220 220" width="100%" height="100%">
+              <defs>
+                <linearGradient id="cakeBase" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#FFD4E2"/>
+                  <stop offset="100%" stop-color="#FFC0D4"/>
+                </linearGradient>
+                <linearGradient id="cakeMid" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#FFEAF1"/>
+                  <stop offset="100%" stop-color="#FFDCE9"/>
+                </linearGradient>
+                <linearGradient id="cakeTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#F5EFFF"/>
+                  <stop offset="100%" stop-color="#E9DFFC"/>
+                </linearGradient>
+                <radialGradient id="flameGrad" cx="50%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#FFE9A8"/>
+                  <stop offset="60%" stop-color="#FFB25C"/>
+                  <stop offset="100%" stop-color="#FF8A3C"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="110" cy="195" rx="85" ry="10" fill="#6B4E71" opacity="0.08"/>
+              <rect x="45" y="140" width="130" height="50" rx="10" fill="url(#cakeBase)"/>
+              <rect x="45" y="140" width="130" height="16" rx="8" fill="#fff" opacity="0.5"/>
+              <rect x="55" y="100" width="110" height="45" rx="10" fill="url(#cakeMid)"/>
+              <rect x="55" y="100" width="110" height="14" rx="7" fill="#fff" opacity="0.5"/>
+              <rect x="70" y="65" width="80" height="40" rx="10" fill="url(#cakeTop)"/>
+              <rect x="70" y="65" width="80" height="12" rx="6" fill="#fff" opacity="0.5"/>
+              <circle cx="65" cy="120" r="3" fill="#FFC857"/>
+              <circle cx="155" cy="115" r="3" fill="#6EC6A5"/>
+              <circle cx="80" cy="165" r="3" fill="#FFC857"/>
+              <circle cx="150" cy="170" r="3" fill="#FF8FA3"/>
+              <circle cx="110" cy="130" r="3" fill="#fff"/>
+              <rect x="103" y="30" width="14" height="38" rx="4" fill="#FFC857"/>
+              <rect x="103" y="30" width="14" height="10" rx="4" fill="#fff" opacity="0.4"/>
+              <g id="flame" class="flame">
+                <path d="M110 8 C 118 18, 118 28, 110 32 C 102 28, 102 18, 110 8 Z" fill="url(#flameGrad)"/>
+                <path d="M110 16 C 114 22, 114 27, 110 29 C 106 27, 106 22, 110 16 Z" fill="#FFF3C4"/>
+              </g>
+              <g id="smoke" class="smoke">
+                <path d="M110 30 Q 105 15 112 5" stroke="#D8CFE0" stroke-width="4" fill="none" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="mic-status" id="micStatus">
+            <span class="eq-bars" id="eqBars" style="display:none;"><span></span><span></span><span></span></span>
+            <span id="micStatusText">Requesting microphone…</span>
+          </div>
+          <p class="tap-hint" id="tapHint">👆 or simply tap the candle</p>
+        </div>
+
+        <!-- STATE 2: gift box (replaces the cake) -->
+        <div class="stage-item" id="stateGift">
+          <h1>A little something for you</h1>
+          <p class="sub">Tap the gift to open it</p>
+          <div class="gift-wrap" id="giftBox" role="button" tabindex="0" aria-label="Open the gift box">
+            <svg viewBox="0 0 200 170" width="100%" height="100%">
+              <defs>
+                <linearGradient id="giftBase" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#C4B2EA"/>
+                  <stop offset="100%" stop-color="#A88DDB"/>
+                </linearGradient>
+                <linearGradient id="giftLid" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#AC8FE0"/>
+                  <stop offset="100%" stop-color="#9270CC"/>
+                </linearGradient>
+              </defs>
+              <g class="gift-glow">
+                <circle cx="100" cy="70" r="70" fill="#FFF3C4" opacity="0.5"/>
+              </g>
+              <rect x="35" y="80" width="130" height="80" rx="10" fill="url(#giftBase)"/>
+              <rect x="35" y="80" width="130" height="80" rx="10" fill="#fff" opacity="0.08"/>
+              <rect x="90" y="80" width="20" height="80" fill="#FFE1EC"/>
+              <g class="gift-lid">
+                <rect x="28" y="55" width="144" height="30" rx="10" fill="url(#giftLid)"/>
+                <rect x="90" y="55" width="20" height="30" fill="#FFE1EC"/>
+                <path d="M75 55 C 55 40, 55 15, 78 20 C 90 23, 92 45, 100 55 C 108 45, 110 23, 122 20 C 145 15, 145 40, 125 55 Z" fill="url(#giftLid)"/>
+              </g>
+            </svg>
+          </div>
+          <p class="gift-caption">✨ Something sweet is waiting inside</p>
+        </div>
+
+        <!-- STATE 3: the vintage letter (replaces the gift box) -->
+        <div class="stage-item" id="stateLetter">
+          <div class="letter-wrap">
+            <div class="letter-card">
+              <p class="letter-title">Happy Birthday</p>
+              <p id="letterMessage"></p>
+              <p class="letter-seal">✦ With love ✦</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL for "No" -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <p>Are you sure? Try again! 🥺</p>
+      <button id="modalClose">Okay, okay 💕</button>
+    </div>
+  </div>
+
+  <!-- MUSIC TOGGLE -->
+  <button class="music-toggle" id="musicToggle" aria-label="Toggle background music">🔊</button>
+
+  <!-- CREATOR SETTINGS -->
+  <button class="admin-toggle" id="adminToggle">✨ Creator settings</button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="admin-panel" id="adminPanel">
+    <div class="drag-handle"></div>
+    <h3>Write your own message</h3>
+    <p class="hint">This becomes the letter inside the gift box for whoever opens your link.</p>
+    <textarea id="customMessage" placeholder="Happy birthday! Wishing you a day as sweet as you are..."></textarea>
+    <div class="admin-actions">
+      <button class="btn-generate" id="generateLink">Generate shareable link</button>
+      <button class="btn-close-admin" id="closeAdmin">Close</button>
+    </div>
+    <div class="link-preview" id="linkPreview"></div>
+    <div class="copied-note" id="copiedNote">Copied to clipboard! 📋</div>
+  </div>
+
+</div>
+
+<!-- AUDIO ELEMENTS (royalty-free, hosted on the Internet Archive) -->
+<audio id="sfxClick" preload="auto" src="https://archive.org/download/yt-5s.com-pop-sound-effect-128-kbps/yt5s.com%20-%20POP%20-%20Sound%20Effect%20%28128%20kbps%29.mp3"></audio>
+<audio id="sfxWhoosh" preload="auto" src="https://archive.org/download/whoosh/whoosh-%20%2814%29.mp3"></audio>
+<audio id="sfxBgMusic" preload="auto" loop src="https://archive.org/download/happy-birthday-instrumental/HAPPY%20BIRTHDAY%20INSTRUMENTAL.mp3"></audio>
+
+<script>
+(function(){
+  const DEFAULT_MESSAGE = "Happy birthday to the most wonderful person I know! 🎉\n\nI hope today is filled with laughter, cake, and all your favorite things. Here's to another year of you being absolutely amazing.\n\nWith so much love,\nYour friend 💗";
+
+  const appShell = document.getElementById('appShell');
+  const screen1 = document.getElementById('screen1');
+  const screen2 = document.getElementById('screen2');
+  const btnYes = document.getElementById('btnYes');
+  const btnNo = document.getElementById('btnNo');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+
+  const stateCake = document.getElementById('stateCake');
+  const stateGift = document.getElementById('stateGift');
+  const stateLetter = document.getElementById('stateLetter');
+
+  const candleTarget = document.getElementById('candleTarget');
+  const flame = document.getElementById('flame');
+  const smoke = document.getElementById('smoke');
+  const eqBars = document.getElementById('eqBars');
+  const micStatusText = document.getElementById('micStatusText');
+  const tapHint = document.getElementById('tapHint');
+  const giftBox = document.getElementById('giftBox');
+  const letterMessage = document.getElementById('letterMessage');
+
+  const adminToggle = document.getElementById('adminToggle');
+  const adminPanel = document.getElementById('adminPanel');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const closeAdmin = document.getElementById('closeAdmin');
+  const customMessage = document.getElementById('customMessage');
+  const generateLink = document.getElementById('generateLink');
+  const linkPreview = document.getElementById('linkPreview');
+  const copiedNote = document.getElementById('copiedNote');
+
+  const musicToggle = document.getElementById('musicToggle');
+
+  const sfxClick = document.getElementById('sfxClick');
+  const sfxWhoosh = document.getElementById('sfxWhoosh');
+  const sfxBgMusic = document.getElementById('sfxBgMusic');
+
+  let candleBlown = false;
+  let giftOpened = false;
+  let musicPlaying = false;
+
+  // ---------- SOUND HELPERS ----------
+  function playSound(el, volume){
+    try{
+      el.currentTime = 0;
+      el.volume = volume !== undefined ? volume : 1;
+      const p = el.play();
+      if(p && p.catch) p.catch(() => {});
+    }catch(err){ /* ignore */ }
+  }
+  function playClick(){ playSound(sfxClick, 0.6); }
+  function playWhoosh(){ playSound(sfxWhoosh, 0.7); }
+  function startBgMusic(){
+    try{
+      sfxBgMusic.volume = 0.45;
+      const p = sfxBgMusic.play();
+      if(p && p.then){
+        p.then(() => {
+          musicPlaying = true;
+          musicToggle.textContent = '🔊';
+          musicToggle.classList.add('show');
+        }).catch(() => {
+          musicPlaying = false;
+          musicToggle.textContent = '🔇';
+          musicToggle.classList.add('show');
+        });
+      }
+    }catch(err){ /* ignore */ }
+  }
+  musicToggle.addEventListener('click', () => {
+    if(musicPlaying){
+      sfxBgMusic.pause();
+      musicPlaying = false;
+      musicToggle.textContent = '🔇';
+    } else {
+      playSound(sfxBgMusic, 0.45);
+      sfxBgMusic.loop = true;
+      musicPlaying = true;
+      musicToggle.textContent = '🔊';
+    }
+  });
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', playClick);
+  });
+
+  // ---------- AMBIENT FLOATING DECOR ----------
+  function initAmbientDecor(){
+    const layer = document.getElementById('ambientLayer');
+    const symbols = ['💗','✨','⭐','🎈','💫'];
+    const count = 10;
+    for(let i=0; i<count; i++){
+      const el = document.createElement('div');
+      el.className = 'floaty';
+      el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+      const size = 11 + Math.random()*14;
+      el.style.left = Math.random()*100 + '%';
+      el.style.fontSize = size + 'px';
+      el.style.animationDuration = (10 + Math.random()*10) + 's';
+      el.style.animationDelay = (Math.random()*14) + 's';
+      layer.appendChild(el);
+    }
+  }
+  initAmbientDecor();
+
+  // ---------- Message from URL ----------
+  function getMessageFromURL(){
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    return msg ? decodeURIComponent(msg) : null;
+  }
+  const urlMessage = getMessageFromURL();
+  const finalMessage = urlMessage || DEFAULT_MESSAGE;
+
+  // ---------- Screen 1 logic ----------
+  btnYes.addEventListener('click', () => {
+    screen1.classList.remove('active');
+    screen2.classList.add('active');
+    initMicListening();
+  });
+  btnNo.addEventListener('click', () => { modalOverlay.classList.add('active'); });
+  modalClose.addEventListener('click', () => { modalOverlay.classList.remove('active'); });
+  modalOverlay.addEventListener('click', (e) => {
+    if(e.target === modalOverlay) modalOverlay.classList.remove('active');
+  });
+
+  // ---------- Stage swap helper ----------
+  function swapStage(hideEl, showEl){
+    hideEl.classList.remove('visible');
+    setTimeout(() => {
+      hideEl.style.display = 'none';
+      showEl.style.display = 'flex';
+      requestAnimationFrame(() => showEl.classList.add('visible'));
+    }, 450);
+  }
+
+  // ---------- Candle blow logic (click + mic) ----------
+  function blowCandle(){
+    if(candleBlown) return;
+    candleBlown = true;
+    flame.classList.add('out');
+    smoke.classList.add('show');
+    eqBars.style.display = 'none';
+    micStatusText.textContent = 'Blown out! 🎉';
+    tapHint.style.display = 'none';
+    playWhoosh();
+    launchConfetti();
+    stopMicListening();
+    setTimeout(() => { swapStage(stateCake, stateGift); }, 500);
+  }
+  candleTarget.addEventListener('click', blowCandle);
+  candleTarget.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); blowCandle(); }
+  });
+
+  // ---------- Microphone blow detection ----------
+  let audioCtx = null;
+  let analyser = null;
+  let micStream = null;
+  let micRAF = null;
+
+  function initMicListening(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      micStatusText.textContent = 'Mic not available — tap the flame instead';
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        micStream = stream;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        source.connect(analyser);
+
+        eqBars.style.display = 'flex';
+        micStatusText.textContent = 'Listening… blow now!';
+        monitorMic();
+      })
+      .catch(() => {
+        micStatusText.textContent = 'Mic permission denied — tap the flame instead';
+      });
+  }
+
+  function monitorMic(){
+    if(!analyser || candleBlown) return;
+    const data = new Uint8Array(analyser.fftSize);
+    let loudFrames = 0;
+    const THRESHOLD = 0.32;
+    const FRAMES_NEEDED = 5;
+
+    function tick(){
+      if(candleBlown) return;
+      analyser.getByteTimeDomainData(data);
+      let sumSquares = 0;
+      for(let i=0; i<data.length; i++){
+        const v = (data[i] - 128) / 128;
+        sumSquares += v*v;
+      }
+      const rms = Math.sqrt(sumSquares / data.length);
+
+      if(rms > THRESHOLD){
+        loudFrames++;
+        if(loudFrames >= FRAMES_NEEDED){ blowCandle(); return; }
+      } else {
+        loudFrames = Math.max(0, loudFrames - 1);
+      }
+      micRAF = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  function stopMicListening(){
+    if(micRAF) cancelAnimationFrame(micRAF);
+    micRAF = null;
+    if(micStream){ micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    if(audioCtx){ audioCtx.close().catch(() => {}); audioCtx = null; }
+    analyser = null;
+  }
+
+  // ---------- Gift box logic: opening hides cake+gift, reveals letter ----------
+  function openGift(){
+    if(giftOpened || !candleBlown) return;
+    giftOpened = true;
+    giftBox.classList.add('opened');
+    letterMessage.textContent = finalMessage;
+    startBgMusic();
+    setTimeout(() => { swapStage(stateGift, stateLetter); }, 550);
+  }
+  giftBox.addEventListener('click', openGift);
+  giftBox.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGift(); }
+  });
+
+  // ---------- Confetti (confined to the app shell) ----------
+  function launchConfetti(){
+    const colors = ['#FF8FA3', '#FFC857', '#B8A6E0', '#6EC6A5', '#F1ECFF'];
+    for(let i=0; i<24; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random()*100 + '%';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDuration = (1.6 + Math.random()*1.2) + 's';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      appShell.appendChild(piece);
+      setTimeout(() => piece.remove(), 3200);
+    }
+  }
+
+  // ---------- Admin drawer ----------
+  function openAdmin(){ adminPanel.classList.add('open'); sidebarOverlay.classList.add('open'); }
+  function closeAdminPanel(){ adminPanel.classList.remove('open'); sidebarOverlay.classList.remove('open'); }
+  adminToggle.addEventListener('click', openAdmin);
+  closeAdmin.addEventListener('click', closeAdminPanel);
+  sidebarOverlay.addEventListener('click', closeAdminPanel);
+
+  generateLink.addEventListener('click', async () => {
+    const text = customMessage.value.trim();
+    const messageToUse = text || DEFAULT_MESSAGE;
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('msg', encodeURIComponent(messageToUse));
+    const finalUrl = url.toString();
+
+    linkPreview.textContent = finalUrl;
+    linkPreview.classList.add('show');
+
+    try{
+      await navigator.clipboard.writeText(finalUrl);
+      copiedNote.classList.add('show');
+      setTimeout(() => copiedNote.classList.remove('show'), 2500);
+    }catch(err){
+      copiedNote.textContent = "Couldn't auto-copy — select the link above manually.";
+      copiedNote.classList.add('show');
+    }
+  });
+
+  if(urlMessage){ customMessage.value = urlMessage; }
+})();
+</script>
+
+</body>
+</html>
